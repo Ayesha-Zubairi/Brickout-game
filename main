@@ -1,43 +1,40 @@
 package BrickBreaker;
-
+import java.io.File;
 import javax.swing.JFrame;
 
-/**
- *
- * @author Ammar
- */
+
 public class Main {
 	
-    /**
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-           
-            
+	public static void main(String[] args) {
+            try{
 		JFrame obj = new JFrame();
-               
 		Gameplay gamePlay = new Gameplay();
-                
 		obj.setBounds(10, 10, 700, 600);
 		obj.setTitle("Brick out");
 		obj.setResizable(false);
 		obj.setVisible(true);
 		obj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		obj.add(gamePlay);
-		obj.setLocationRelativeTo(null);
-                obj.dispose();
+		obj.setLocationRelativeTo(null);                
+                //JFrame obj = new JFrame(); 
+            }    catch(Exception e){             
+		Gameplay2 gamePlay2 = new Gameplay2();
+		gamePlay2.setBounds(10, 10, 700, 600);
+		gamePlay2.setTitle("Brick out");
+		gamePlay2.setResizable(false);
+		gamePlay2.setVisible(true);
+		gamePlay2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gamePlay2.add(gamePlay2);
+		gamePlay2.setLocationRelativeTo(null);
+                System.out.println(e);
+            }
+           
                 
-                Gameplay2 gamePlay2 = new Gameplay2();
-                obj.setBounds(10, 10, 700, 600);
-		obj.setTitle("Brick out");
-		obj.setResizable(false);
-		obj.setVisible(true);
-		obj.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		obj.add(gamePlay2);
-                obj.setLocationRelativeTo(null);
+            }
+            }
+            
+
+	
 
 
-	}
-}
-
+	
