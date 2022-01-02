@@ -1,4 +1,8 @@
 package BrickBreaker;
+
+import java.util.Scanner;
+import java.io.FileInputStream;
+import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -10,42 +14,42 @@ import java.awt.Rectangle;
 import javax.swing.JPanel;
 import java.awt.Graphics2D;
 import java.awt.Font;
+import javax.swing.JOptionPane;
+import java.text.SimpleDateFormat;
 
-/**
- *
- * @author Ayesha
- */
+
 public class Gameplay extends JPanel implements KeyListener, ActionListener{
 	private boolean play = false;
-	private int score = 0;
+	int score = 0;
 	private int level = 1;
-	private int totalBricks= 12;
+	private int totalBricks;
 	private Timer timer;
-	private int delay = 4;
+	private int delay ;
 	private int playerX = 310;
 	private int ballposX = 120;
 	private int ballposY = 350;
 	private int ballXdir = -1;
 	private int ballYdir = -2;
 	
-	
 	private MapGenerator map;
 	
-    /**
-     *
-     */
-    public Gameplay() {
-		map = new MapGenerator(2,6);
+	
+	
+	public Gameplay() {
+            try{
+		map = new MapGenerator(1,6);
+                totalBricks=6;
+                delay = 3;
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
 		timer = new Timer(delay, this);
 		timer.start();
-                
-               
 
-	}
-	
+	}catch(Exception e){
+                System.out.println(e);
+        }
+        }
 	public void paint(Graphics g) {
 		//background
 		g.setColor(Color.black);
@@ -65,11 +69,34 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 		g.setFont(new Font("serif", Font.BOLD, 25));
 		g.drawString("Level: 1", 100, 30);
 		
-		//scores
+		
+                //scores
 		g.setColor(Color.white);
 		g.setFont(new Font("serif", Font.BOLD, 25));
 		g.drawString(""+score, 590, 30);
-		
+            
+            try{
+                File file = new File("Score.txt");
+                SimpleDateFormat sd  =  new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                System.out.println(sd.format(file.lastModified()));
+                System.out.println("Scores: "+score);
+               
+            }catch(Exception e){
+                System.out.println("ERROR!!");
+            }  
+            try{
+                File myfile = new File("Score.txt");
+                Scanner sc = new Scanner(myfile);
+                while(sc.hasNextLine()){
+                    String line= sc.nextLine();
+                    System.out.println(line);
+                }
+                sc.close();
+            }catch(Exception e){
+                System.out.println("ERROR!!");
+            }
+            
+            
 		//the paddle
 		g.setColor(Color.green);
 		g.fillRect(playerX, 550, 100, 8);
@@ -79,7 +106,6 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 		g.fillOval(ballposX, ballposY, 20, 20);
 		
 		//game over
-                
 		if(ballposY > 570) {
                     try{
 			play = false;
@@ -92,13 +118,14 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 			
 			g.setFont(new Font("serif", Font.BOLD, 20));
 			g.drawString("PRESS ENTER TO RESTART!!", 215, 350);
-		}catch(Exception e){
-                  System.out.println(e);
-        }
 			
-		}
-		//wins the game
-		if(totalBricks <= 0) {
+			
+		}catch(Exception e){
+                        System.out.println(e);
+                }
+                }
+		
+		if(totalBricks == 0) {// next level
                     try{
 			play = false;
 			ballXdir = 0;
@@ -110,22 +137,23 @@ public class Gameplay extends JPanel implements KeyListener, ActionListener{
 			
 			
 			g.setFont(new Font("serif", Font.BOLD, 20));
-			g.drawString("PRESS ENTER TO RESTART!!", 215, 350);
-                    }catch(Exception e){
-                  System.out.println(e);
-        }
-                    
+			g.drawString("PRESS ENTER FOR LEVEL 2", 215, 350);  
+                        }catch(Exception e){
+                        System.out.println(e);
+                }
 		}
 		
 		
-		
 		g.dispose();
+                
+                
 		
 
 		
 		
 
 	}
+        
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -136,7 +164,7 @@ if(new Rectangle(ballposX, ballposY, 20, 20).intersects(new Rectangle(playerX,55
 				ballYdir =- ballYdir;
 			}
 
-A:	for(int i=0; i<map.map.length; i++) {
+A:	for(int i=0; i<map.map.length; i++) {// setting the ball
 				for(int j =0; j<map.map[0].length; j++) {
 					if(map.map[i][j] > 0) {
                                             try{
@@ -162,11 +190,10 @@ A:	for(int i=0; i<map.map.length; i++) {
 							}
 							break A;
 						}
-						
 					}catch(Exception f){
-                                        System.out.println(f);
-        }
-                                            }
+                                    System.out.println(f);
+                }	
+					}
 				}
 			}
 
@@ -185,7 +212,8 @@ A:	for(int i=0; i<map.map.length; i++) {
 			
 		}
 		repaint();
-	}
+	} 
+        
 
 	@Override
 	public void keyTyped(KeyEvent e) {	}
@@ -194,7 +222,7 @@ A:	for(int i=0; i<map.map.length; i++) {
 	public void keyReleased(KeyEvent e) {		}
 
 	@Override
-	public void keyPressed(KeyEvent e) {
+	public void keyPressed(KeyEvent e) {//to move the ball
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			if(playerX >=600) {
 				playerX = 600;
@@ -216,28 +244,30 @@ A:	for(int i=0; i<map.map.length; i++) {
 		}
 		if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 			if(!play) {
-                            try{
-				play = true;
+				play = false;                                
 				ballposX = 120;
 				ballposY = 350;
 				ballXdir = -1;
 				ballYdir = -2;
 				playerX = 310;
-				score = 0;
-				totalBricks = 12;
-				map = new MapGenerator(2,6);
-				
-				repaint();
-                                }catch(Exception f){
-                            System.out.println(f);
-        }
-			}
-		}
-		
-		 
-		
-		
-	}
+				score ++;
+				totalBricks = 24;                                                   
+                                
+				map = new MapGenerator(3,8);
+                               
+                   
+                                   repaint();
+                                   
+                            }
+                        
+                        
+                                
+                    }
+
+
+
+  
+            }
 
 
 	private void moveRight() {
@@ -255,8 +285,5 @@ A:	for(int i=0; i<map.map.length; i++) {
 		
 	}
 
-   
-	
+    
 }
-
-
